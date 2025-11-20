@@ -1,5 +1,6 @@
 import { AttachmentBuilder, Message } from 'discord.js';
-import * as stream from 'node:stream';
+import { ChildProcessWithoutNullStreams } from 'node:child_process';
+import { Readable } from 'node:stream';
 import youtubedl from 'youtube-dl-exec';
 
 import { Trigger } from './trigger.js';
@@ -19,38 +20,63 @@ export class TwitchClipTrigger implements Trigger {
     async execute(msg: Message, _: EventData): Promise<void> {
         const matches = msg.content.match(this.urlRegex);
 
-        if (matches) {
-            const match = matches[0]; // Extract the URL
-            // If the last character is a >, then remove it
-            const url = match.endsWith('>') ? match.slice(0, -1) : match;
-
-            // Set up a stream.PassThrough to stream the download directly
-            const videoStream = new stream.PassThrough();
-
-            // Execute youtube-dl and pipe the output to videoStream
-            const subprocess = youtubedl.exec(url, {
-                format: 'best',
-                output: '-', // Direct output to stdout
-            });
-
-            subprocess.stdout.pipe(videoStream);
-
-            // Handle the end of the subprocess
-            subprocess.on('close', code => {
-                Logger.info(`youtube-dl process exited with code ${code}`);
-            });
-
-            // Send the video stream directly as an attachment in Discord using AttachmentBuilder
-            const attachment = new AttachmentBuilder(videoStream, { name: 'clip.mp4' });
-            try {
-                await msg.channel.send({
-                    content: `Here's your Twitch clip!`,
-                    files: [attachment],
-                });
-                Logger.info('Video sent to Discord');
-            } catch (error) {
-                Logger.error('Error sending video to Discord:', error);
-            }
+        if (!matches) {
+            return;
         }
+
+        const match = matches[0];
+        const url = match.endsWith('>') ? match.slice(0, -1) : match;
+
+        const subprocess = youtubedl.exec(url, {
+            format: 'best',
+            output: '-',
+        }) as ChildProcessWithoutNullStreams;
+
+        if (!subprocess.stdout) {
+            Logger.warn('youtube-dl exec did not expose stdout.');
+            return;
+        }
+
+        let buffer: Buffer;
+        try {
+            buffer = await this.readStdout(subprocess.stdout, subprocess);
+        } catch (error) {
+            Logger.error('Failed to download Twitch clip stream.', error);
+            return;
+        }
+
+        const attachment = new AttachmentBuilder(buffer, { name: 'clip.mp4' });
+        try {
+            await msg.channel.send({
+                content: `Here's your Twitch clip!`,
+                files: [attachment],
+            });
+            Logger.info('Video sent to Discord');
+        } catch (error) {
+            Logger.error('Error sending video to Discord:', error);
+        }
+    }
+
+    private async readStdout(
+        stdout: Readable,
+        child: ChildProcessWithoutNullStreams
+    ): Promise<Buffer> {
+        let chunks: Buffer[] = [];
+        stdout.on('data', chunk => {
+            chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
+        });
+
+        let closeCode = await new Promise<number>((resolve, reject) => {
+            child.once('error', error => reject(error));
+            child.once('close', code => resolve(code ?? 0));
+        });
+
+        Logger.info(`youtube-dl process exited with code ${closeCode}`);
+
+        if (closeCode !== 0) {
+            throw new Error(`youtube-dl exited with code ${closeCode}`);
+        }
+
+        return Buffer.concat(chunks);
     }
 }

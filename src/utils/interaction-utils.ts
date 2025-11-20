@@ -75,7 +75,7 @@ export class InteractionUtils {
                 typeof content === 'string'
                     ? { content }
                     : content instanceof EmbedBuilder
-                      ? { embeds: [content] }
+                      ? ({ embeds: [content.toJSON()] } as InteractionReplyOptions)
                       : content;
             if (intr.deferred || intr.replied) {
                 return await intr.followUp({
@@ -130,7 +130,7 @@ export class InteractionUtils {
                 typeof content === 'string'
                     ? { content }
                     : content instanceof EmbedBuilder
-                      ? { embeds: [content] }
+                      ? ({ embeds: [content.toJSON()] } as WebhookMessageEditOptions)
                       : content;
             return await intr.editReply(options);
         } catch (error) {
@@ -155,7 +155,7 @@ export class InteractionUtils {
                 typeof content === 'string'
                     ? { content }
                     : content instanceof EmbedBuilder
-                      ? { embeds: [content] }
+                      ? ({ embeds: [content.toJSON()] } as InteractionUpdateOptions)
                       : content;
             return await intr.update({
                 ...options,

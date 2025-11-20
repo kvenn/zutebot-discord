@@ -102,6 +102,53 @@ A welcome message is sent to the server and owner when the bot is added.
         - This is so Discord knows what your commands look like.
         - It may take up to an hour for command changes to appear.
 
+## Relay API
+
+The manager process now exposes a small REST endpoint so any backend can ask the bot to post a message without deploying new code.
+
+1. Configure the channel map and secret in `config/config.json`:
+
+    ```json
+    "api": {
+        "port": 3001,
+        "secret": "<manager-secret>",
+        "relay": {
+            "secret": "<relay-secret>",
+            "allowedMentions": { "parse": [] }
+        }
+    }
+    ```
+
+    - `relay.secret` defaults to `api.secret` if omitted.
+    - `allowedMentions` is applied when a payload does not specify its own; the default disables `@everyone` and `@here` spam.
+
+2. Send HTTP `POST /relay/messages` with the `Authorization` header equal to the relay secret and a JSON body shaped like the options you would pass to `channel.send`:
+
+    ```bash
+    curl -X POST https://<your-heroku-app>.herokuapp.com/relay/messages \
+        -H "Content-Type: application/json" \
+        -H "Authorization: $RELAY_SECRET" \
+        -d '{
+            "guildId": "1177719384668635196",
+            "channelId": "1351537227162980383",
+            "payload": {
+                "content": "Deployed v1.23.4 to production",
+                "embeds": [
+                    { "title": "Changelog", "description": "- add api\n- fix bug" }
+                ]
+            },
+            "attachments": [
+                { "url": "https://example.com/report.json", "name": "report.json" }
+            ]
+        }'
+    ```
+
+    - Every request must include the numeric Discord `guildId` and `channelId`; optionally include `threadId` when posting into an existing thread.
+    - `payload` mirrors [`MessageCreateOptions`](https://discord.js.org/#/docs/discord.js/main/typedef/MessageCreateOptions) – content, embeds, components, stickers, flags, etc.
+    - `attachments` (optional) lets you supply public URLs that will be fetched and uploaded on your behalf.
+
+The endpoint returns `202 Accepted` with the channel ID and Discord message ID once the bot hands the payload to the appropriate shard. Add more channels or update formatting by editing config data only.
+
 ## Linting and styles
 
 * Set your project to automatically apply ESLint on save

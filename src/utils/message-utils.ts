@@ -34,7 +34,7 @@ export class MessageUtils {
                 typeof content === 'string'
                     ? { content }
                     : content instanceof EmbedBuilder
-                      ? { embeds: [content] }
+                      ? ({ embeds: [content.toJSON()] } as BaseMessageOptions)
                       : content;
             return await target.send(options);
         } catch (error) {
@@ -59,7 +59,7 @@ export class MessageUtils {
                 typeof content === 'string'
                     ? { content }
                     : content instanceof EmbedBuilder
-                      ? { embeds: [content] }
+                      ? ({ embeds: [content.toJSON()] } as BaseMessageOptions)
                       : content;
             return await msg.reply(options);
         } catch (error) {
@@ -84,7 +84,7 @@ export class MessageUtils {
                 typeof content === 'string'
                     ? { content }
                     : content instanceof EmbedBuilder
-                      ? { embeds: [content] }
+                      ? ({ embeds: [content.toJSON()] } as MessageEditOptions)
                       : content;
             return await msg.edit(options);
         } catch (error) {

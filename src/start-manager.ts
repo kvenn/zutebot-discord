@@ -1,10 +1,16 @@
+import { REST } from '@discordjs/rest';
 import { ShardingManager } from 'discord.js';
 import dotenv from 'dotenv-safe';
 import { createRequire } from 'node:module';
 import 'reflect-metadata';
 
 import { config } from './config.js';
-import { GuildsController, RootController, ShardsController } from './controllers/index.js';
+import {
+    GuildsController,
+    RelayController,
+    RootController,
+    ShardsController,
+} from './controllers/index.js';
 import { Job, UpdateServerCountJob } from './jobs/index.js';
 import { Api } from './models/api.js';
 import { Manager } from './models/manager.js';
@@ -74,8 +80,10 @@ async function start(): Promise<void> {
     // API
     let guildsController = new GuildsController(shardManager);
     let shardsController = new ShardsController(shardManager);
+    let rest = new REST({ version: '10' }).setToken(config.discord.token);
+    let relayController = new RelayController(shardManager, rest);
     let rootController = new RootController();
-    let api = new Api([guildsController, shardsController, rootController]);
+    let api = new Api([guildsController, shardsController, relayController, rootController]);
 
     // Start
     await manager.start();
