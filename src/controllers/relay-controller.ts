@@ -137,14 +137,36 @@ export class RelayController implements Controller {
                         if (matches.length > 0 && channel.guild) {
                             let mentionedUserIds: string[] = [];
 
+                            // Fetch all members if cache is empty
+                            if (channel.guild.members.cache.size === 0) {
+                                await channel.guild.members.fetch();
+                            }
+
                             for (let match of matches) {
                                 let username = match[1].trim().toLowerCase();
+
+                                // Try to find in cache first
                                 let member = channel.guild.members.cache.find(
                                     m =>
                                         m.user.username.toLowerCase() === username ||
                                         m.user.tag.toLowerCase() === username ||
                                         (m.nickname && m.nickname.toLowerCase() === username)
                                 );
+
+                                // If not found in cache, try fetching by username search
+                                if (!member) {
+                                    try {
+                                        let searchResults = await channel.guild.members.search({
+                                            query: username,
+                                            limit: 1,
+                                        });
+                                        if (searchResults.size > 0) {
+                                            member = searchResults.first();
+                                        }
+                                    } catch (error) {
+                                        // Search failed, continue without this member
+                                    }
+                                }
 
                                 if (member) {
                                     content = content.replace(match[0], `<@${member.user.id}>`);
