@@ -128,6 +128,51 @@ export class RelayController implements Controller {
 
                     let messagePayload = { ...context.payload };
 
+                    // Process username mentions ({{username}} -> <@userId>)
+                    if (typeof messagePayload.content === 'string') {
+                        let content = messagePayload.content;
+                        let usernamePattern = /\{\{([^}]+)\}\}/g;
+                        let matches = [...content.matchAll(usernamePattern)];
+
+                        if (matches.length > 0 && channel.guild) {
+                            let mentionedUserIds: string[] = [];
+
+                            for (let match of matches) {
+                                let username = match[1].trim().toLowerCase();
+                                let member = channel.guild.members.cache.find(
+                                    m =>
+                                        m.user.username.toLowerCase() === username ||
+                                        m.user.tag.toLowerCase() === username ||
+                                        (m.nickname && m.nickname.toLowerCase() === username)
+                                );
+
+                                if (member) {
+                                    content = content.replace(match[0], `<@${member.user.id}>`);
+                                    mentionedUserIds.push(member.user.id);
+                                }
+                            }
+
+                            messagePayload.content = content;
+
+                            // Update allowedMentions to include found users
+                            if (mentionedUserIds.length > 0) {
+                                if (!messagePayload.allowedMentions) {
+                                    messagePayload.allowedMentions = { parse: [], users: [] };
+                                }
+                                if (typeof messagePayload.allowedMentions === 'object') {
+                                    let allowedMentions = messagePayload.allowedMentions as Record<
+                                        string,
+                                        unknown
+                                    >;
+                                    if (!Array.isArray(allowedMentions.users)) {
+                                        allowedMentions.users = [];
+                                    }
+                                    (allowedMentions.users as string[]).push(...mentionedUserIds);
+                                }
+                            }
+                        }
+                    }
+
                     if (context.attachments?.length) {
                         let fetchFn = (globalThis as any).fetch;
                         if (!fetchFn) {
