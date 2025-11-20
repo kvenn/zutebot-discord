@@ -168,10 +168,15 @@ export class RelayController implements Controller {
                                     }
                                 }
 
-                                if (member) {
-                                    content = content.replace(match[0], `<@${member.user.id}>`);
-                                    mentionedUserIds.push(member.user.id);
+                                if (!member) {
+                                    return {
+                                        delivered: false,
+                                        reason: `Mention not found: ${match[1].trim()}`,
+                                    };
                                 }
+
+                                content = content.replace(match[0], `<@${member.user.id}>`);
+                                mentionedUserIds.push(member.user.id);
                             }
 
                             messagePayload.content = content;
