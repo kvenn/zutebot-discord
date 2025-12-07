@@ -5,7 +5,7 @@ import { Message } from 'discord.js';
 import { Trigger } from './trigger.js';
 import { EventData } from '../models/internal-models.js';
 import { Logger } from '../services/index.js';
-import { MessageUtils } from '../utils/index.js';
+import { MessageUtils, getAxiosProxyConfig } from '../utils/index.js';
 
 export class XboxMediaTrigger implements Trigger {
     requireGuild = false;
@@ -25,7 +25,9 @@ export class XboxMediaTrigger implements Trigger {
             const url = matches[0];
 
             // Make a request to the detected URL
-            const response = await axios.get(url);
+            const response = await axios.get(url, {
+                proxy: getAxiosProxyConfig() ?? false,
+            });
 
             // Check for a successful response
             if (response.status !== 200) {

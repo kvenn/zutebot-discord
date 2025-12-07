@@ -2,7 +2,7 @@ import fetch from 'node-fetch';
 
 import { CustomClient } from '../extensions/index.js';
 import { Job } from '../jobs/index.js';
-import { ClientUtils } from '../utils/index.js';
+import { ClientUtils, getProxyAgent } from '../utils/index.js';
 
 interface ClipPoster {
     guildId: string;
@@ -54,6 +54,8 @@ export class CheckNewClipsJob extends Job {
                 'Client-ID': process.env.TWITCH_CLIENT_ID,
                 Authorization: `Bearer ${process.env.TWITCH_ACCESS_TOKEN}`,
             },
+            // Route through proxy when configured
+            agent: getProxyAgent(),
         });
 
         if (!response.ok) {

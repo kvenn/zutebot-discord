@@ -16,7 +16,6 @@ import { Api } from './models/api.js';
 import { Manager } from './models/manager.js';
 import { HttpService, JobService, Logger, MasterApiService } from './services/index.js';
 import { MathUtils, ShardUtils } from './utils/index.js';
-import 'global-agent/bootstrap.js';
 
 dotenv.config();
 const require = createRequire(import.meta.url);
@@ -25,6 +24,12 @@ let Debug = require('../config/debug.json');
 let Logs = require('../lang/logs.json');
 
 async function start(): Promise<void> {
+    if (process.env.GLOBAL_AGENT_HTTP_PROXY) {
+        Logger.warn('GLOBAL_AGENT_HTTP_PROXY detected; enabling global-agent proxying.');
+        let { bootstrap } = await import('global-agent');
+        bootstrap();
+    }
+
     Logger.info(Logs.info.appStarted);
 
     // Dependencies

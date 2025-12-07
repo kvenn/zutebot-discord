@@ -36,7 +36,6 @@ import {
     Logger,
 } from './services/index.js';
 import { Trigger } from './triggers/index.js';
-import 'global-agent/bootstrap.js';
 import { TwitchClipTrigger } from './triggers/twitch-clip-trigger.js';
 import { XboxMediaTrigger } from './triggers/xbox-media-trigger.js';
 
@@ -47,6 +46,13 @@ let Config = require('../config/config.json');
 let Logs = require('../lang/logs.json');
 
 async function start(): Promise<void> {
+    // Apply proxy only if explicitly configured; avoids breaking Discord gateway over bad proxies.
+    if (process.env.GLOBAL_AGENT_HTTP_PROXY) {
+        Logger.warn('GLOBAL_AGENT_HTTP_PROXY detected; enabling global-agent proxying.');
+        let { bootstrap } = await import('global-agent');
+        bootstrap();
+    }
+
     // Services
     let eventDataService = new EventDataService();
 
