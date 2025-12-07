@@ -17,7 +17,7 @@ import { Manager } from './models/manager.js';
 import { HttpService, JobService, Logger, MasterApiService } from './services/index.js';
 import { MathUtils, ShardUtils } from './utils/index.js';
 
-dotenv.config();
+dotenv.config({ allowEmptyValues: true });
 const require = createRequire(import.meta.url);
 let Config = require('../config/config.json');
 let Debug = require('../config/debug.json');

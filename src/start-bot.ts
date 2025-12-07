@@ -39,7 +39,7 @@ import { Trigger } from './triggers/index.js';
 import { TwitchClipTrigger } from './triggers/twitch-clip-trigger.js';
 import { XboxMediaTrigger } from './triggers/xbox-media-trigger.js';
 
-dotenv.config();
+dotenv.config({ allowEmptyValues: true });
 
 const require = createRequire(import.meta.url);
 let Config = require('../config/config.json');
