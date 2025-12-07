@@ -61,7 +61,7 @@ export class Bot {
             this.onShardReady(shardId, unavailableGuilds)
         );
         this.client.on(Events.ShardDisconnect, (event, shardId) =>
-            Logger.error(
+            Logger.warn(
                 `Shard ${shardId} disconnected (code: ${event.code}, reason: ${event.reason ?? 'n/a'}, clean: ${event.wasClean})`
             )
         );

@@ -50,6 +50,10 @@ async function start(): Promise<void> {
     // Services
     let eventDataService = new EventDataService();
 
+    let enableGatewayDebug =
+        process.env.DEBUG_DISCORD_GATEWAY === '1' ||
+        process.env.DEBUG_DISCORD_GATEWAY?.toLowerCase() === 'true';
+
     let disableMessageContentIntent =
         process.env.DISABLE_MESSAGE_CONTENT_INTENT === '1' ||
         process.env.DISABLE_MESSAGE_CONTENT_INTENT?.toLowerCase() === 'true';
@@ -59,6 +63,9 @@ async function start(): Promise<void> {
     let intentBits = intents.map(intent => GatewayIntentBits[intent]);
     if (disableMessageContentIntent) {
         Logger.warn('MessageContent intent disabled via DISABLE_MESSAGE_CONTENT_INTENT env var.');
+    }
+    if (enableGatewayDebug) {
+        Logger.warn('Discord gateway debug logging enabled (DEBUG_DISCORD_GATEWAY=1).');
     }
 
     // Client
@@ -113,6 +120,10 @@ async function start(): Promise<void> {
     let messageHandler = new MessageHandler(triggerHandler);
     let reactionHandler = new ReactionHandler(reactions, eventDataService);
     let voiceStateUpdateHandler = new VoiceStateUpdateHandler(eventDataService);
+
+    if (enableGatewayDebug) {
+        client.on('debug', (message: string) => Logger.warn(`[discord.js debug] ${message}`));
+    }
 
     // Jobs
     let jobs: Job[] = [new CheckNewClipsJob(client, [kyleGameClipPoster])];
