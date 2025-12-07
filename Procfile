@@ -1,1 +1,1 @@
-web: pnpm run start:manager
+web: pnpm run start:manager:prod

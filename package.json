@@ -29,6 +29,7 @@
         "start": "pnpm run start:bot",
         "start:bot": "pnpm run build && node --enable-source-maps dist/start-bot.js",
         "start:manager": "pnpm run build && node --enable-source-maps dist/start-manager.js",
+        "start:manager:prod": "node --enable-source-maps dist/start-manager.js",
         "start:pm2": "pnpm run build && pnpm run pm2:start",
         "pm2:start": "pm2 start process.json",
         "pm2:stop": "pm2 stop process.json",
@@ -36,7 +37,8 @@
         "dev": "tsc-watch --onSuccess \"pnpm run watch\"",
         "dev:manager": "tsc-watch --onSuccess \"pnpm run watch:manager\"",
         "watch": "nodemon --watch './**/*.{ts}' --exec ts-node src/start-bot.ts",
-        "watch:manager": "nodemon --watch './**/*.{ts}' --exec ts-node src/manager-bot.ts"
+        "watch:manager": "nodemon --watch './**/*.{ts}' --exec ts-node src/manager-bot.ts",
+        "heroku-postbuild": "pnpm run build"
     },
     "dependencies": {
         "@discordjs/rest": "2.2.0",
