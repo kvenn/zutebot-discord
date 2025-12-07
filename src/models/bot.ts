@@ -82,7 +82,8 @@ export class Bot {
             await this.client.login(token);
         } catch (error) {
             Logger.error(Logs.error.clientLogin, error);
-            return;
+            // Bubble up so the shard process exits and the manager can surface the failure quickly.
+            throw error;
         }
     }
 
