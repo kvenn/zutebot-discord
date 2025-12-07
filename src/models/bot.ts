@@ -60,6 +60,17 @@ export class Bot {
         this.client.on(Events.ShardReady, (shardId: number, unavailableGuilds: Set<string>) =>
             this.onShardReady(shardId, unavailableGuilds)
         );
+        this.client.on(Events.ShardDisconnect, (event, shardId) =>
+            Logger.error(
+                `Shard ${shardId} disconnected (code: ${event.code}, reason: ${event.reason ?? 'n/a'}, clean: ${event.wasClean})`
+            )
+        );
+        this.client.on(Events.ShardError, (error, shardId) =>
+            Logger.error(`Shard ${shardId} encountered an error`, error)
+        );
+        this.client.on(Events.ShardReconnecting, shardId =>
+            Logger.warn(`Shard ${shardId} reconnecting after disconnect.`)
+        );
         this.client.on(Events.GuildCreate, (guild: Guild) => this.onGuildJoin(guild));
         this.client.on(Events.GuildDelete, (guild: Guild) => this.onGuildLeave(guild));
         this.client.on(Events.VoiceStateUpdate, (oldState: VoiceState, newState: VoiceState) =>

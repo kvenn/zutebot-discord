@@ -1,5 +1,5 @@
 import { REST } from '@discordjs/rest';
-import { Options, Partials } from 'discord.js';
+import { GatewayIntentBits, Options, Partials } from 'discord.js';
 import dotenv from 'dotenv-safe';
 import { createRequire } from 'node:module';
 
@@ -50,10 +50,21 @@ async function start(): Promise<void> {
     // Services
     let eventDataService = new EventDataService();
 
+    let disableMessageContentIntent =
+        process.env.DISABLE_MESSAGE_CONTENT_INTENT === '1' ||
+        process.env.DISABLE_MESSAGE_CONTENT_INTENT?.toLowerCase() === 'true';
+    let intents = (Config.client.intents as (keyof typeof GatewayIntentBits)[]).filter(intent =>
+        disableMessageContentIntent ? intent !== 'MessageContent' : true
+    );
+    let intentBits = intents.map(intent => GatewayIntentBits[intent]);
+    if (disableMessageContentIntent) {
+        Logger.warn('MessageContent intent disabled via DISABLE_MESSAGE_CONTENT_INTENT env var.');
+    }
+
     // Client
     let client = new CustomClient({
         /** https://discord-api-types.dev/api/discord-api-types-v10/enum/GatewayIntentBits#Index */
-        intents: Config.client.intents,
+        intents: intentBits,
         partials: (Config.client.partials as string[]).map(partial => Partials[partial]),
         makeCache: Options.cacheWithLimits({
             // Keep default caching behavior
