@@ -18,7 +18,12 @@ import { HttpService, JobService, Logger, MasterApiService } from './services/in
 import { MathUtils, ShardUtils } from './utils/index.js';
 
 // Optional env vars that may be intentionally unset in production
-['GLOBAL_AGENT_HTTP_PROXY', 'BRIGHTDATA_PROXY_URL', 'BD_PROXY_PASSWORD'].forEach(name => {
+[
+    'GLOBAL_AGENT_HTTP_PROXY',
+    'BRIGHTDATA_PROXY_URL',
+    'BD_PROXY_PASSWORD',
+    'TWITCH_ACCESS_TOKEN',
+].forEach(name => {
     if (process.env[name] === undefined) {
         process.env[name] = '';
     }
