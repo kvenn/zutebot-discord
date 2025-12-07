@@ -85,9 +85,11 @@ async function start(): Promise<void> {
     let rootController = new RootController();
     let api = new Api([guildsController, shardsController, relayController, rootController]);
 
-    // Start
+    // Start API immediately so the platform sees an open port while shards come online
+    let apiStart = api.start();
+
     await manager.start();
-    await api.start();
+    await apiStart;
     if (Config.clustering.enabled) {
         await masterApiService.ready();
     }
