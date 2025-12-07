@@ -39,6 +39,13 @@ import { Trigger } from './triggers/index.js';
 import { TwitchClipTrigger } from './triggers/twitch-clip-trigger.js';
 import { XboxMediaTrigger } from './triggers/xbox-media-trigger.js';
 
+// Optional env vars that may be intentionally unset in production
+['GLOBAL_AGENT_HTTP_PROXY', 'BRIGHTDATA_PROXY_URL', 'BD_PROXY_PASSWORD'].forEach(name => {
+    if (process.env[name] === undefined) {
+        process.env[name] = '';
+    }
+});
+
 dotenv.config({ allowEmptyValues: true });
 
 const require = createRequire(import.meta.url);

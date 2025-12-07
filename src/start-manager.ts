@@ -17,6 +17,13 @@ import { Manager } from './models/manager.js';
 import { HttpService, JobService, Logger, MasterApiService } from './services/index.js';
 import { MathUtils, ShardUtils } from './utils/index.js';
 
+// Optional env vars that may be intentionally unset in production
+['GLOBAL_AGENT_HTTP_PROXY', 'BRIGHTDATA_PROXY_URL', 'BD_PROXY_PASSWORD'].forEach(name => {
+    if (process.env[name] === undefined) {
+        process.env[name] = '';
+    }
+});
+
 dotenv.config({ allowEmptyValues: true });
 const require = createRequire(import.meta.url);
 let Config = require('../config/config.json');
