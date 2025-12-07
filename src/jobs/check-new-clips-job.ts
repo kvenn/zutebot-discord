@@ -3,7 +3,7 @@ import fetch from 'node-fetch';
 import { CustomClient } from '../extensions/index.js';
 import { Job } from '../jobs/index.js';
 import { Logger } from '../services/index.js';
-import { ClientUtils, getProxyAgent } from '../utils/index.js';
+import { ClientUtils } from '../utils/index.js';
 
 interface ClipPoster {
     guildId: string;
@@ -71,7 +71,6 @@ export class CheckNewClipsJob extends Job {
                 `https://id.twitch.tv/oauth2/token?client_id=${clientId}&client_secret=${clientSecret}&grant_type=client_credentials`,
                 {
                     method: 'POST',
-                    agent: getProxyAgent(),
                 }
             );
             if (!res.ok) {
@@ -105,8 +104,6 @@ export class CheckNewClipsJob extends Job {
                 'Client-ID': process.env.TWITCH_CLIENT_ID,
                 Authorization: `Bearer ${token}`,
             },
-            // Route through proxy when configured
-            agent: getProxyAgent(),
         });
 
         if (!response.ok) {
