@@ -4,6 +4,7 @@
 /dist
 /temp
 !/**/config/**/*.example.json
+.heroku-account
 
 # =====================================================
 # Node.js
