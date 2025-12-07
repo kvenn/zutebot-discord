@@ -3,11 +3,11 @@ import { HttpsProxyAgent } from 'https-proxy-agent';
 
 const proxyUrl = process.env.BRIGHTDATA_PROXY_URL ?? process.env.GLOBAL_AGENT_HTTP_PROXY;
 
-export function getProxyAgent(): HttpsProxyAgent | undefined {
+export function getProxyAgent(): HttpsProxyAgent<string> | undefined {
     if (!proxyUrl) {
         return undefined;
     }
-    return new HttpsProxyAgent(proxyUrl);
+    return new HttpsProxyAgent<string>(proxyUrl);
 }
 
 export function getAxiosProxyConfig(): AxiosProxyConfig | undefined {
