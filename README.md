@@ -17,26 +17,26 @@ Follow the [setup instructions](#setup) below, and have a working bot with many 
 
 ### Built-In Bot Features:
 
--   Basic command structure.
--   Rate limits and command cooldowns.
--   Welcome message when joining a server.
--   Shows server count in bot status.
--   Posts server count to popular bot list websites.
--   Support for multiple languages.
+- Basic command structure.
+- Rate limits and command cooldowns.
+- Welcome message when joining a server.
+- Shows server count in bot status.
+- Posts server count to popular bot list websites.
+- Support for multiple languages.
 
 ### Developer Friendly:
 
--   Written with TypeScript.
--   Uses the [discord.js](https://discord.js.org/) framework.
--   Built-in debugging setup for VSCode.
--   Written with [ESM](https://nodejs.org/api/esm.html#introduction) for future compatibility with packages.
--   Support for running with the [PM2](https://pm2.keymetrics.io/) process manger.
--   Support for running with [Docker](https://www.docker.com/).
+- Written with TypeScript.
+- Uses the [discord.js](https://discord.js.org/) framework.
+- Built-in debugging setup for VSCode.
+- Written with [ESM](https://nodejs.org/api/esm.html#introduction) for future compatibility with packages.
+- Support for running with the [PM2](https://pm2.keymetrics.io/) process manger.
+- Support for running with [Docker](https://www.docker.com/).
 
 ### Scales as Your Bot Grows:
 
--   Supports [sharding](https://discordjs.guide/sharding/) which is required when your bot is in 2500+ servers.
--   Supports [clustering](https://github.com/KevinNovak/Discord-Bot-TypeScript-Template-Master-Api) which allows you to run your bot on multiple machines.
+- Supports [sharding](https://discordjs.guide/sharding/) which is required when your bot is in 2500+ servers.
+- Supports [clustering](https://github.com/KevinNovak/Discord-Bot-TypeScript-Template-Master-Api) which allows you to run your bot on multiple machines.
 
 ## Commands
 
@@ -132,7 +132,7 @@ The manager process now exposes a small REST endpoint so any backend can ask the
             "guildId": "1177719384668635196",
             "channelId": "1351537227162980383",
             "payload": {
-                "content": "Deployed v1.23.4 to production",
+                "content": "Deployed v1.23.4 to production. Alert to: {{zutedude}}",
                 "embeds": [
                     { "title": "Changelog", "description": "- add api\n- fix bug" }
                 ]
@@ -151,17 +151,16 @@ The endpoint returns `202 Accepted` with the channel ID and Discord message ID o
 
 ## Linting and styles
 
-* Set your project to automatically apply ESLint on save
-* Set up prettier to format your code on save
-* Configure your IDE to add imports with .js at the end automatically
-  * Alt for this project: https://stackoverflow.com/a/76678279/1759443
+- Set your project to automatically apply ESLint on save
+- Set up prettier to format your code on save
+- Configure your IDE to add imports with .js at the end automatically
+    - Alt for this project: https://stackoverflow.com/a/76678279/1759443
 
 ## Testing Locally
 
 [You can't](https://stackoverflow.com/a/71057844/1759443).
 
 But actually I just click the run button and that seems to stop the heroku instance. Or just test in prod.
-
 
 ## Start Scripts
 
@@ -194,21 +193,21 @@ You can run the bot in multiple modes:
 
 ### EventDataService
 
-* This is the "context" passed to all handlers.
-* You can add getter functions to query a database, for example.
+- This is the "context" passed to all handlers.
+- You can add getter functions to query a database, for example.
 
 ### i18n with [Linguini](https://github.com/KevinNovak/Linguini)
 
-* This bot uses Linguini, an i18n library made by the same author.
-* It's not great, so I won't be using it anymore.
-* `Lang.*` to get the things nested under `data` in `lang.*.json` 
+- This bot uses Linguini, an i18n library made by the same author.
+- It's not great, so I won't be using it anymore.
+- `Lang.*` to get the things nested under `data` in `lang.*.json`
 
 ## Bots Using This Template
 
 A list of Discord bots using this template.
 
 | Bot                                                                    | Servers                                                       |
-|------------------------------------------------------------------------|---------------------------------------------------------------|
+| ---------------------------------------------------------------------- | ------------------------------------------------------------- |
 | [Birthday Bot](https://top.gg/bot/656621136808902656)                  | ![](https://top.gg/api/widget/servers/656621136808902656.svg) |
 | [QOTD Bot](https://top.gg/bot/713586207119900693)                      | ![](https://top.gg/api/widget/servers/713586207119900693.svg) |
 | [Friend Time](https://top.gg/bot/471091072546766849)                   | ![](https://top.gg/api/widget/servers/471091072546766849.svg) |
