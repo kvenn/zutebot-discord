@@ -102,6 +102,10 @@ A welcome message is sent to the server and owner when the bot is added.
         - This is so Discord knows what your commands look like.
         - It may take up to an hour for command changes to appear.
 
+## Things to Know
+
+- `client-utils.ts` has many helpers (for finding guilds/channels/voice by id, name, and others)
+
 ## Relay API
 
 The manager process now exposes a small REST endpoint so any backend can ask the bot to post a message without deploying new code.

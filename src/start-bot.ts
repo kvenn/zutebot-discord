@@ -20,6 +20,7 @@ import {
     GuildJoinHandler,
     GuildLeaveHandler,
     MessageHandler,
+    PresenceUpdateHandler,
     ReactionHandler,
     TriggerHandler,
     VoiceStateUpdateHandler,
@@ -138,6 +139,7 @@ async function start(): Promise<void> {
     let messageHandler = new MessageHandler(triggerHandler);
     let reactionHandler = new ReactionHandler(reactions, eventDataService);
     let voiceStateUpdateHandler = new VoiceStateUpdateHandler(eventDataService);
+    let presenceUpdateHandler = new PresenceUpdateHandler();
 
     if (enableGatewayDebug) {
         client.on('debug', (message: string) => Logger.warn(`[discord.js debug] ${message}`));
@@ -157,6 +159,7 @@ async function start(): Promise<void> {
         buttonHandler,
         reactionHandler,
         voiceStateUpdateHandler,
+        presenceUpdateHandler,
         new JobService(jobs)
     );
 

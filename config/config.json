@@ -9,6 +9,7 @@
             "DirectMessages",
             "DirectMessageReactions",
             "GuildVoiceStates",
+            "GuildPresences",
             "MessageContent"
         ],
         "partials": ["Message", "Channel", "Reaction"],

@@ -10,6 +10,7 @@ import {
     MessageReaction,
     PartialMessageReaction,
     PartialUser,
+    Presence,
     RateLimitData,
     RESTEvents,
     User,
@@ -23,6 +24,7 @@ import {
     GuildJoinHandler,
     GuildLeaveHandler,
     MessageHandler,
+    PresenceUpdateHandler,
     ReactionHandler,
     VoiceStateUpdateHandler,
 } from '../events/index.js';
@@ -47,6 +49,7 @@ export class Bot {
         private buttonHandler: ButtonHandler,
         private reactionHandler: ReactionHandler,
         private voiceStateUpdateHandler: VoiceStateUpdateHandler,
+        private presenceUpdateHandler: PresenceUpdateHandler,
         private jobService: JobService
     ) {}
 
@@ -75,6 +78,11 @@ export class Bot {
         this.client.on(Events.GuildDelete, (guild: Guild) => this.onGuildLeave(guild));
         this.client.on(Events.VoiceStateUpdate, (oldState: VoiceState, newState: VoiceState) =>
             this.onVoiceStateUpdate(oldState, newState)
+        );
+        this.client.on(
+            Events.PresenceUpdate,
+            (oldPresence: Presence | null, newPresence: Presence) =>
+                this.onPresenceUpdate(oldPresence, newPresence)
         );
         this.client.on(Events.MessageCreate, (msg: Message) => this.onMessage(msg));
         this.client.on(Events.InteractionCreate, (intr: Interaction) => this.onInteraction(intr));
@@ -147,6 +155,21 @@ export class Bot {
             await this.voiceStateUpdateHandler.process(oldState, newState);
         } catch (error) {
             Logger.error(Logs.error.voiceStateUpdate, error);
+        }
+    }
+
+    private async onPresenceUpdate(
+        oldPresence: Presence | null,
+        newPresence: Presence
+    ): Promise<void> {
+        if (!this.ready || Debug.dummyMode.enabled) {
+            return;
+        }
+
+        try {
+            await this.presenceUpdateHandler.process(oldPresence, newPresence);
+        } catch (error) {
+            Logger.error(Logs.error.unspecified, error);
         }
     }
 

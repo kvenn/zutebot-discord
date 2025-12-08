@@ -5,5 +5,6 @@ export { GuildJoinHandler } from './guild-join-handler.js';
 export { GuildLeaveHandler } from './guild-leave-handler.js';
 export { ReactionHandler } from './reaction-handler.js';
 export { MessageHandler } from './message-handler.js';
+export { PresenceUpdateHandler } from './presence-update-handler.js';
 export { TriggerHandler } from './trigger-handler.js';
 export { VoiceStateUpdateHandler } from './voice-state-update-handler.js';
