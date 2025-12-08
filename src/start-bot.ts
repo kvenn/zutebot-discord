@@ -35,6 +35,7 @@ import {
     EventDataService,
     JobService,
     Logger,
+    NotificationThrottleService,
 } from './services/index.js';
 import { Trigger } from './triggers/index.js';
 import { TwitchClipTrigger } from './triggers/twitch-clip-trigger.js';
@@ -68,6 +69,10 @@ async function start(): Promise<void> {
 
     // Services
     let eventDataService = new EventDataService();
+    let notificationThrottleService = new NotificationThrottleService();
+
+    // Start the throttle service cleanup
+    notificationThrottleService.startCleanup();
 
     let enableGatewayDebug =
         process.env.DEBUG_DISCORD_GATEWAY === '1' ||
@@ -138,8 +143,11 @@ async function start(): Promise<void> {
     let triggerHandler = new TriggerHandler(triggers, eventDataService);
     let messageHandler = new MessageHandler(triggerHandler);
     let reactionHandler = new ReactionHandler(reactions, eventDataService);
-    let voiceStateUpdateHandler = new VoiceStateUpdateHandler(eventDataService);
-    let presenceUpdateHandler = new PresenceUpdateHandler();
+    let voiceStateUpdateHandler = new VoiceStateUpdateHandler(
+        eventDataService,
+        notificationThrottleService
+    );
+    let presenceUpdateHandler = new PresenceUpdateHandler(notificationThrottleService);
 
     if (enableGatewayDebug) {
         client.on('debug', (message: string) => Logger.warn(`[discord.js debug] ${message}`));

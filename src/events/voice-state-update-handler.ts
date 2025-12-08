@@ -1,6 +1,6 @@
 import { NewsChannel, TextChannel, VoiceChannel, VoiceState } from 'discord.js';
 
-import { EventDataService, Logger } from '../services/index.js';
+import { EventDataService, Logger, NotificationThrottleService } from '../services/index.js';
 import { ClientUtils, MessageUtils } from '../utils/index.js';
 
 export class VoiceStateUpdateHandler {
@@ -8,7 +8,10 @@ export class VoiceStateUpdateHandler {
     private eventDataService: EventDataService;
     private voiceChannelSuffix = '-time';
 
-    constructor(eventDataService: EventDataService) {
+    constructor(
+        eventDataService: EventDataService,
+        private throttleService: NotificationThrottleService
+    ) {
         this.eventDataService = eventDataService;
     }
 
@@ -44,11 +47,25 @@ export class VoiceStateUpdateHandler {
             Logger.warn(`No channel association found for channel ID ${newState.channelId}`);
             return;
         }
+
+        // Check throttle before sending notification
+        const userId = newState.member.id;
+        const guildId = guild.id;
+        const context = `voice:${voiceChannel.id}`;
+
+        if (!this.throttleService.shouldNotify(userId, guildId, context)) {
+            // Notification throttled, skip
+            return;
+        }
+
         const voiceChannelAt = `<#${voiceChannel.id}>`;
         await MessageUtils.send(
             associatedTextChannel,
             `📣 ${newState.member.user.username} has joined ${voiceChannelAt} 📣`
         );
+
+        // Record notification after successful send
+        this.throttleService.recordNotification(userId, guildId, context);
     }
 
     private voiceChannelToTextChannel(

@@ -1,10 +1,12 @@
 import { ActivityType, Presence } from 'discord.js';
 
 import { EventHandler } from './index.js';
-import { Logger } from '../services/index.js';
+import { Logger, NotificationThrottleService } from '../services/index.js';
 import { ClientUtils, PermissionUtils } from '../utils/index.js';
 
 export class PresenceUpdateHandler implements EventHandler {
+    constructor(private throttleService: NotificationThrottleService) {}
+
     public async process(oldPresence: Presence | null, newPresence: Presence): Promise<void> {
         // Ignore bot users
         if (newPresence.user?.bot) {
@@ -31,6 +33,16 @@ export class PresenceUpdateHandler implements EventHandler {
             return;
         }
 
+        // Check throttle before proceeding
+        const userId = newPresence.userId;
+        const guildId = guild.id;
+        const context = `game:${newGame.name}`;
+
+        if (!this.throttleService.shouldNotify(userId, guildId, context)) {
+            // Notification throttled, skip
+            return;
+        }
+
         const gameChannel = await ClientUtils.findTextChannel(guild, 'game');
         if (!gameChannel) {
             // Channel doesn't exist, silently return
@@ -51,6 +63,9 @@ export class PresenceUpdateHandler implements EventHandler {
             const message = `🎮 ${member?.toString() || newPresence.user?.tag} started playing **${newGame.name}**`;
 
             await gameChannel.send(message);
+
+            // Record notification after successful send
+            this.throttleService.recordNotification(userId, guildId, context);
 
             Logger.info(
                 `Game notification sent: ${newPresence.user?.tag} started playing ${newGame.name} in guild "${guild.name}"`
