@@ -13,6 +13,12 @@ Follow the [setup instructions](#setup) below, and have a working bot with many 
 
 [![Discord Shield](https://discord.com/api/guilds/660711235766976553/widget.png?style=shield)](https://discord.gg/c9kQktCbsE)
 
+## Todo
+
+- Database for storing preferences (user and guild level)
+    - See "Features#New"
+- Persistence for throttling
+
 ## Features
 
 ### Built-In Bot Features:
@@ -23,6 +29,22 @@ Follow the [setup instructions](#setup) below, and have a working bot with many 
 - Shows server count in bot status.
 - Posts server count to popular bot list websites.
 - Support for multiple languages.
+
+### Newly Added
+
+- VoiceStateUpdate Handler - Notify associated channels when anyone joins a voice equivalent
+    - Hardcoded to game, code, and riff (game-time, code-time, riff-time)
+    - TODO: Specify associations at guild level
+- CheckNewClips Job - Query for twitch clips and post to a channel
+    - Hardcoded to only do for clips for zutedude
+    - TODO: Allow users to submit their twitch ID and what channel they want them to post to
+    - TODO: Throttling persistence (currenly only in memory?)
+- TwitchClip and XboxMedia Triggers - Auto replace xbox media and twitch clip URLs with Discord native player
+    - TODO: Test if this still works? Maybe needs proxy?
+- PresenceUpdate Handler - Game Presensce notifications
+    - Hardcoded to notify channel called "game"
+    - TODO: Specify which channel to send which games / users to
+    - TODO: Throttling persistence (currnely only in memory)
 
 ### Developer Friendly:
 
