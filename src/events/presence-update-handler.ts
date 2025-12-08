@@ -1,7 +1,8 @@
-import { ActivityType, ChannelType, Presence, TextChannel } from 'discord.js';
+import { ActivityType, Presence } from 'discord.js';
 
 import { EventHandler } from './index.js';
 import { Logger } from '../services/index.js';
+import { ClientUtils, PermissionUtils } from '../utils/index.js';
 
 export class PresenceUpdateHandler implements EventHandler {
     public async process(oldPresence: Presence | null, newPresence: Presence): Promise<void> {
@@ -24,25 +25,20 @@ export class PresenceUpdateHandler implements EventHandler {
             return;
         }
 
-        // Find the "game" channel (case-insensitive)
+        // Find the "game" channel using ClientUtils
         const guild = newPresence.guild;
         if (!guild) {
             return;
         }
 
-        const gameChannel = guild.channels.cache.find(
-            channel =>
-                channel.type === ChannelType.GuildText && channel.name.toLowerCase() === 'game'
-        ) as TextChannel | undefined;
-
+        const gameChannel = await ClientUtils.findTextChannel(guild, 'game');
         if (!gameChannel) {
             // Channel doesn't exist, silently return
             return;
         }
 
         // Check if bot has permission to send messages
-        const permissions = gameChannel.permissionsFor(guild.members.me);
-        if (!permissions?.has(['ViewChannel', 'SendMessages'])) {
+        if (!PermissionUtils.canSend(gameChannel, true)) {
             Logger.warn(
                 `Missing permissions to send game notification in channel "${gameChannel.name}" (${gameChannel.id}) in guild "${guild.name}" (${guild.id})`
             );
