@@ -60,7 +60,8 @@ export class PresenceUpdateHandler implements EventHandler {
         try {
             // Send notification
             const member = newPresence.member;
-            const message = `🎮 ${member?.toString() || newPresence.user?.tag} started playing **${newGame.name}**`;
+            const username = member?.displayName || newPresence.user?.username || 'Someone';
+            const message = `🎮 ${username} started playing **${newGame.name}**`;
 
             await gameChannel.send(message);
 
