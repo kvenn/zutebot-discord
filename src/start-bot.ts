@@ -69,7 +69,7 @@ async function start(): Promise<void> {
 
     // Services
     let eventDataService = new EventDataService();
-    let notificationThrottleService = new NotificationThrottleService();
+    let notificationThrottleService = new NotificationThrottleService(360); // 6 hours
 
     // Start the throttle service cleanup
     notificationThrottleService.startCleanup();
