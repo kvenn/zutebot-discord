@@ -1,4 +1,6 @@
 packages:
-  - .
-ignoredBuiltDependencies:
-  - youtube-dl-exec
+    - .
+
+# Install the yt-dlp binary used by the bot's existing media downloader.
+allowBuilds:
+    youtube-dl-exec: true

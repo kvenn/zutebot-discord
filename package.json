@@ -5,7 +5,8 @@
     "description": "A discord.js bot written with TypeScript",
     "private": true,
     "engines": {
-        "node": "20.x"
+        "node": "20.x",
+        "pnpm": "12.5.1"
     },
     "type": "module",
     "main": "dist/start-bot.js",
