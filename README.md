@@ -243,3 +243,18 @@ A list of Discord bots using this template.
 | [Topcoder TC-101](https://github.com/topcoder-platform/tc-discord-bot) |                                                               |
 
 Don't see your bot listed? [Contact us](https://discord.gg/c9kQktCbsE) to have your bot added!
+
+
+### Bright Data proxy endpoint
+
+Use `http://<username>:<password>@brd.superproxy.io:44445` for
+`BRIGHTDATA_PROXY_URL`, or `GLOBAL_AGENT_HTTP_PROXY` when global proxying is
+required. Bright Data's old certificates expire September 25, 2026 at 00:00 UTC.
+Both the selective proxy helpers and bot/manager global-agent bootstrap upgrade
+legacy ports 22225 and 33335 on Bright Data's current and legacy proxy hostnames.
+Other proxies are unchanged. Proxy helpers read environment settings when called,
+after dotenv has loaded them.
+
+If a host explicitly trusts a Bright Data CA, install `brightdata_root_ca_44445.crt`
+from the [official migration guide](https://docs.brightdata.com/general/account/ssl-certificate-migration).
+Update the deployed environment and restart the bot process to apply it.

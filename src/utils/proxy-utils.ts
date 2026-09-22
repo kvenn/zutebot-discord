@@ -1,9 +1,15 @@
 import { AxiosProxyConfig } from 'axios';
 import { HttpsProxyAgent } from 'https-proxy-agent';
 
-const proxyUrl = process.env.BRIGHTDATA_PROXY_URL ?? process.env.GLOBAL_AGENT_HTTP_PROXY;
+import { currentProxyUrl } from './proxy-url.js';
+
+function configuredProxyUrl(): string | undefined {
+    const value = process.env.BRIGHTDATA_PROXY_URL || process.env.GLOBAL_AGENT_HTTP_PROXY;
+    return value ? currentProxyUrl(value) : undefined;
+}
 
 export function getProxyAgent(): HttpsProxyAgent<string> | undefined {
+    const proxyUrl = configuredProxyUrl();
     if (!proxyUrl) {
         return undefined;
     }
@@ -11,6 +17,7 @@ export function getProxyAgent(): HttpsProxyAgent<string> | undefined {
 }
 
 export function getAxiosProxyConfig(): AxiosProxyConfig | undefined {
+    const proxyUrl = configuredProxyUrl();
     if (!proxyUrl) {
         return undefined;
     }
