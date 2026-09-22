@@ -147,7 +147,10 @@ async function start(): Promise<void> {
         eventDataService,
         notificationThrottleService
     );
-    let presenceUpdateHandler = new PresenceUpdateHandler(notificationThrottleService);
+    let presenceUpdateHandler = new PresenceUpdateHandler(
+        notificationThrottleService,
+        Config.gameNotifications?.userIds
+    );
 
     if (enableGatewayDebug) {
         client.on('debug', (message: string) => Logger.warn(`[discord.js debug] ${message}`));

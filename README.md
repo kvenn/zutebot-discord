@@ -41,10 +41,42 @@ Follow the [setup instructions](#setup) below, and have a working bot with many 
     - TODO: Throttling persistence (currenly only in memory?)
 - TwitchClip and XboxMedia Triggers - Auto replace xbox media and twitch clip URLs with Discord native player
     - TODO: Test if this still works? Maybe needs proxy?
-- PresenceUpdate Handler - Game Presensce notifications
+- PresenceUpdate Handler - Game presence notifications
     - Hardcoded to notify channel called "game"
-    - TODO: Specify which channel to send which games / users to
-    - TODO: Throttling persistence (currnely only in memory)
+    - Optional player allowlist; see [Game notifications](#game-notifications)
+    - Ignores cosmetic game-name differences and simultaneous duplicate presence updates
+    - TODO: Throttling persistence (currently only in memory)
+
+### Game notifications
+
+Game changes are posted to the shared `game` text channel. Configure whose activity appears using
+`gameNotifications.userIds` in `config/config.json`:
+
+```json
+{
+    "gameNotifications": {
+        "userIds": ["111111111111111111", "222222222222222222", "333333333333333333"]
+    }
+}
+```
+
+Replace the example IDs with the Discord user IDs of the players you want to include. Enable
+Developer Mode in Discord, then right-click each person and choose **Copy User ID**. IDs remain
+stable when usernames or server nicknames change. Restart the bot after editing the configuration.
+
+- Omit `gameNotifications` or `userIds` (as in the example config) to allow everyone.
+- Set `userIds` to a list to allow only those players, across the bot's servers.
+- Set `userIds` to `[]` to disable game notifications for everyone.
+- Invalid IDs or a non-array value fail at startup instead of silently allowing everyone.
+
+This controls **whose game activity is posted**, not who receives a personal alert. Everyone with
+access to the shared channel can see the messages. Voice notifications use their existing behavior.
+Personal follow lists would need saved per-recipient preferences and separate delivery, such as DMs.
+
+Game comparisons and the six-hour per-player, per-server, per-game cooldown ignore punctuation,
+spacing, and case, so `ARK: Survival Ascended` and `ARK Survival Ascended` share one cooldown.
+Messages retain the original game title. Failed sends do not consume the cooldown. Cooldowns are
+stored in memory and reset when the bot restarts.
 
 ### Developer Friendly:
 
