@@ -28,7 +28,7 @@ export class MessageHandler implements EventHandler {
 //     }
 //
 //     const host = 'brd.superproxy.io';
-//     const port = 22225;
+//     const port = 44445;
 //     const username = 'brd-customer-hl_f3368662-zone-residential';
 //     const session_id = randomUUID();
 //
